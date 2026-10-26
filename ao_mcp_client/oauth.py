@@ -25,16 +25,37 @@ logger = logging.getLogger("mcp_oauth")
 GATEWAY_BASE_URL = os.environ.get("CX_GATEWAY_URL", "https://cx-coworker-gateway.adobe.io")
 DEFAULT_PORT = 8765
 DEFAULT_REDIRECT_URI = f"http://localhost:{DEFAULT_PORT}/callback"
-CACHE_DIR = Path(__file__).resolve().parent.parent
+DEFAULT_CACHE_DIR = Path(os.environ.get("AO_MCP_CACHE_DIR", Path.home() / ".ao-mcp-client"))
 
 
 class TokenStore:
     """Manages cached client registration and OAuth tokens on disk."""
 
     def __init__(self, cache_dir: Optional[Path] = None):
-        self.cache_dir = cache_dir or CACHE_DIR
+        self.cache_dir = cache_dir or DEFAULT_CACHE_DIR
+        try:
+            self.cache_dir.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            pass
         self.token_file = self.cache_dir / ".token_cache.json"
         self.client_file = self.cache_dir / ".client_cache.json"
+
+        # Backward compatibility: copy from local CWD if ~/.ao-mcp-client is empty
+        cwd_token = Path.cwd() / ".token_cache.json"
+        if not self.token_file.exists() and cwd_token.exists():
+            try:
+                import shutil
+                shutil.copy2(cwd_token, self.token_file)
+            except Exception:
+                pass
+
+        cwd_client = Path.cwd() / ".client_cache.json"
+        if not self.client_file.exists() and cwd_client.exists():
+            try:
+                import shutil
+                shutil.copy2(cwd_client, self.client_file)
+            except Exception:
+                pass
 
     def load_token(self) -> Optional[Dict[str, Any]]:
         if not self.token_file.exists():

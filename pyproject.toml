@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ao-mcp-client"
+version = "0.1.0"
+description = "Adobe CX Coworker Gateway MCP Client & Stdio Proxy"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx>=0.28.0",
+]
+
+[project.scripts]
+cx-mcp-proxy = "ao_mcp_client.proxy:main"
+ao-mcp-client = "ao_mcp_client.cli:main"

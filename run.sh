@@ -21,4 +21,4 @@ if ! "$PYTHON_BIN" -c "import httpx" 2>/dev/null; then
     "$PYTHON_BIN" -m pip install -q -r "$DIR/requirements.txt"
 fi
 
-PYTHONPATH="$DIR" "$PYTHON_BIN" "$DIR/src/cli.py" "$@"
+PYTHONPATH="$DIR" "$PYTHON_BIN" "$DIR/ao_mcp_client/cli.py" "$@"

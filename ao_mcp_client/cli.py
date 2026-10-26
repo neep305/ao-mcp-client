@@ -17,8 +17,16 @@ PROJECT_ROOT = CURRENT_DIR.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.client import CXCoworkerMCPClient, MCPError
-from src.oauth import AdobeSSOOAuthClient, TokenStore, decode_jwt_payload
+try:
+    from ao_mcp_client.client import CXCoworkerMCPClient, MCPError
+    from ao_mcp_client.oauth import AdobeSSOOAuthClient, TokenStore, decode_jwt_payload
+except ImportError:
+    try:
+        from src.client import CXCoworkerMCPClient, MCPError
+        from src.oauth import AdobeSSOOAuthClient, TokenStore, decode_jwt_payload
+    except ImportError:
+        from client import CXCoworkerMCPClient, MCPError
+        from oauth import AdobeSSOOAuthClient, TokenStore, decode_jwt_payload
 
 
 def print_banner():

@@ -111,6 +111,32 @@ cd /Users/jason/dev/ai-plugins/ao-agent-builder/demo-mcp-client
 
 ---
 
+### 3. Claude Desktop 연동 (GitHub 저장소 직접 실행 - uvx)
+
+Claude Desktop의 설정 파일(`~/Library/Application Support/Claude/claude_desktop_config.json`)에 아래와 같이 등록하면, 별도의 로컬 소스 의존 없이 GitHub에서 직접 최신 프록시를 실행합니다:
+
+```json
+{
+  "mcpServers": {
+    "cx-coworker-gateway": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/neep305/ao-mcp-client.git",
+        "cx-mcp-proxy"
+      ]
+    }
+  }
+}
+```
+
+* **동작 원리**:
+  1. Claude Desktop이 `uvx`를 통해 GitHub 저장소(`neep305/ao-mcp-client`)에서 패키지를 즉시 실행합니다.
+  2. 토큰 및 세션 정보는 사용자 홈 디렉터리(`~/.ao-mcp-client/`)에 안전하게 저장 및 유지됩니다.
+  3. 토큰 만료 시 백그라운드 리프레시를 통해 무중단으로 245개 Adobe 도구가 연결됩니다.
+
+---
+
 ## 📂 프로젝트 구조
 
 ```

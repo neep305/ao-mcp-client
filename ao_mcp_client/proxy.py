@@ -17,11 +17,24 @@ PROJECT_ROOT = CURRENT_DIR.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.client import CXCoworkerMCPClient, MCPError
-from src.oauth import AdobeSSOOAuthClient, TokenStore
+try:
+    from ao_mcp_client.client import CXCoworkerMCPClient, MCPError
+    from ao_mcp_client.oauth import AdobeSSOOAuthClient, TokenStore
+except ImportError:
+    try:
+        from src.client import CXCoworkerMCPClient, MCPError
+        from src.oauth import AdobeSSOOAuthClient, TokenStore
+    except ImportError:
+        from client import CXCoworkerMCPClient, MCPError
+        from oauth import AdobeSSOOAuthClient, TokenStore
 
-# Configure logging to a file in cache dir so it doesn't pollute stdout (critical for stdio MCP)
-log_file = PROJECT_ROOT / "proxy.log"
+# Configure logging to a file in user cache dir (~/.ao-mcp-client/proxy.log)
+log_dir = Path(os.environ.get("AO_MCP_CACHE_DIR", Path.home() / ".ao-mcp-client"))
+try:
+    log_dir.mkdir(parents=True, exist_ok=True)
+except Exception:
+    pass
+log_file = log_dir / "proxy.log"
 logging.basicConfig(
     filename=str(log_file),
     level=logging.INFO,
