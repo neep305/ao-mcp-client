@@ -1,0 +1,3 @@
+.client_cache.json
+.token_cache.json
+*.log
